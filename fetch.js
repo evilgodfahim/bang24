@@ -4,7 +4,7 @@ const path = require("path");
 const { chromium } = require("playwright");
 
 (async () => {
-  const url = "https://www.dainikamadershomoy.com/category/all/opinion";
+  const url = "https://www.banglanews24.com/category/opinion";
 
   const browser = await chromium.launch({ headless: true });
   const page = await browser.newPage();
