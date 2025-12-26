@@ -1,4 +1,3 @@
-// fetch.js
 const fs = require("fs");
 const path = require("path");
 const { chromium } = require("playwright");
@@ -7,21 +6,28 @@ const { chromium } = require("playwright");
   const url = "https://www.banglanews24.com/category/opinion";
 
   const browser = await chromium.launch({ headless: true });
-  const page = await browser.newPage();
+  const page = await browser.newPage({
+    userAgent:
+      "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 Chrome/120 Safari/537.36",
+  });
 
-  await page.goto(url, { waitUntil: "networkidle" });
+  await page.goto(url, {
+    waitUntil: "domcontentloaded", // key change
+    timeout: 60000,
+  });
+
+  // optional hard stop for late JS noise
+  await page.waitForTimeout(2000);
 
   const html = await page.content();
 
   const dir = "saved";
   if (!fs.existsSync(dir)) fs.mkdirSync(dir);
 
-  const filePath = path.join(dir, "opinion.html");
-  fs.writeFileSync(filePath, html, "utf-8");
+  fs.writeFileSync(path.join(dir, "opinion.html"), html, "utf-8");
 
   await browser.close();
 
-  // Regenerate index.html (always same name)
   const index = `
 <!DOCTYPE html>
 <html>
